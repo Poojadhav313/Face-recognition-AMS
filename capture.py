@@ -1,6 +1,7 @@
 import face_recognition
 import cv2
 import numpy as np
+import os
 
 # This is a demo of running face recognition on live video from your webcam. It's a little more complicated than the
 # other example, but it includes some basic performance tweaks to make things run a lot faster:
@@ -10,22 +11,28 @@ import numpy as np
 
 cp = cv2.VideoCapture(0)
 
+known_face_encodings = []
+known_face_names = []
 
-obama_image = face_recognition.load_image_file("images/98374.jpg")
-obama_face_encoding = face_recognition.face_encodings(obama_image)[0]
+# get all images and encode them
+face = {}
+faceEncoding = {}
+x=0
 
-my_image = face_recognition.load_image_file("images/me.jpg")
-my_face_encoding = face_recognition.face_encodings(my_image)[0]
+imagesFolder = os.listdir(os.getcwd()+"/images")
+for i in imagesFolder:
+    li = i.split('.')[0]
+    print(li)
+    
+    
+    face["face{0}.format(x)"] = face_recognition.load_image_file("images/"+i)
+    faceEncoding["faceEncoding{0}.format(x)"] = face_recognition.face_encodings(face["face{0}.format(x)"])[0]
+    
+    known_face_encodings.append(faceEncoding["faceEncoding{0}.format(x)"])
+    known_face_names.append(li)
 
-# Create arrays of known face encodings and their names
-known_face_encodings = [
-    obama_face_encoding,
-    my_face_encoding
-]
-known_face_names = [
-    "Barack Obama",
-    "Pooja jadhav"
-]
+    x = x+1
+
 
 # Initialize some variables
 face_locations = []
