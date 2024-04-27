@@ -8,4 +8,6 @@ client = pymongo.MongoClient(url)
 db = client['faces_encoded']
 #DBtable = db['recog']
 
-DBtable = db['faces']
+dataTable = db['faces'] #stored data table
+
+attendanceTable = db['attendance'] #to store attendance in

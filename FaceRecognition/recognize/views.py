@@ -1,9 +1,12 @@
 from ast import Str
 from asyncio.windows_events import NULL
+import datetime
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views import View
-from .models import DBtable
+from .models import dataTable
+from .models import attendanceTable
+from datetime import datetime
 
 import pandas as pd
 
@@ -16,8 +19,8 @@ def home(request):
     return render(request, "recognize/home.html")
 
 
-def temp(request):
-    collection = DBtable
+def capture(request):
+    collection = dataTable
     cursor = collection.find()
     known_encodings = []
     known_names = []
@@ -32,6 +35,8 @@ def temp(request):
     face_encodings = []
     face_names = []
     process_this_frame = True
+    
+    matched_indices = set()
 
     while True:
         ret, frame1 = cp.read()
@@ -50,7 +55,7 @@ def temp(request):
 
             face_names = []
             for face_encoding in face_encodings:
-                # See if the face is a match for the known face(s)
+                
                 matches = face_recognition.compare_faces(known_encodings, face_encoding)
                 name = "Unknown"
 
@@ -59,6 +64,7 @@ def temp(request):
                 best_match_index = np.argmin(face_distances)
                 if matches[best_match_index]:
                     name = known_names[best_match_index]
+                    matched_indices.add(known_names[best_match_index])  #making set to store matched faces
 
                 face_names.append(name)
 
@@ -78,11 +84,41 @@ def temp(request):
             cv2.rectangle(frame, (left, bottom), (right, bottom + 30), (0, 0, 255), cv2.FILLED)
             font = cv2.FONT_HERSHEY_DUPLEX
             cv2.putText(frame, name, (left + 6, bottom + 20), font, 0.6, (255, 255, 255), 1)
-
+       
         cv2.imshow('Video', frame)
+        
 
         if cv2.waitKey(1) == ord('q'):
             break
+    
+    print(matched_indices)
+    
+    for x in matched_indices:
+        document = collection.find_one({"name" : x})
+
+        shift = ""
+        hr = datetime.now().strftime("%H:%M")
+        if "15:00" < hr > "7:00":
+            shift = "morning shift"
+        elif "23:00" < hr > "15:00":
+            shift = "evening shift"
+        else:
+            shift = "night shift"
+            
+        record = {
+            "id" : document.get("_id"),
+            "name" : x,
+            "email" : document.get("email"),
+            "phone" : document.get("phone"),
+            "department" : document.get("department"),
+            "role" : document.get("role"),
+            "day" : datetime.now().day,
+            "month" : datetime.now().month,
+            "year" : datetime.now().year,
+            "time" : datetime.now().strftime("%H:%M:%S"),
+            "shift" : shift
+            }
+        attendanceTable.insert_one(record)
 
     cp.release()
     cv2.destroyAllWindows()
@@ -90,7 +126,7 @@ def temp(request):
 
 def addData(request): 
     savedNames = []
-    collection = DBtable
+    collection = dataTable
     cursor = collection.find()
     for document in cursor:
         savedNames.append(document["name"])
@@ -146,7 +182,7 @@ def addData(request):
             "role" : role,
             "encoding" : list(faceEncoding["faceEncoding{0}.format(x)"]),
             }
-        DBtable.insert_one(record)
+        dataTable.insert_one(record)
         
         #os.remove(folder+i)
 
