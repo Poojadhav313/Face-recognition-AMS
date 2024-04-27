@@ -1,8 +1,11 @@
 from ast import Str
+from asyncio.windows_events import NULL
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views import View
 from .models import DBtable
+
+import pandas as pd
 
 import face_recognition
 import cv2
@@ -71,7 +74,7 @@ def temp(request):
             # Draw a box around the face
             cv2.rectangle(frame, (left, top - 30), (right, bottom + 30), (0, 0, 255), 2)
 
-            # Draw a label with a name below the face
+            # Draw label 
             cv2.rectangle(frame, (left, bottom), (right, bottom + 30), (0, 0, 255), cv2.FILLED)
             font = cv2.FONT_HERSHEY_DUPLEX
             cv2.putText(frame, name, (left + 6, bottom + 20), font, 0.6, (255, 255, 255), 1)
@@ -85,18 +88,49 @@ def temp(request):
     cv2.destroyAllWindows()
     return HttpResponse("running")
 
-def addData(request):  
+def addData(request): 
+    savedNames = []
+    collection = DBtable
+    cursor = collection.find()
+    for document in cursor:
+        savedNames.append(document["name"])
 
     face = {}
     faceEncoding = {}
     x=0
 
+    
     folder = "C:/Users/dell/Desktop/images/"
-
     imagesFolder = os.listdir(folder)
-    for i in imagesFolder:
-        li = i.split('.')[0]
-        print(li)
+
+    try:
+        df = pd.read_csv("C:/Users/dell/Desktop/data.csv")
+    except:
+        return HttpResponse("File not found")
+    
+    names = df["name"]
+    emails = df["email"]
+    phones =  df["phone"]
+    departments = df["department"]
+    roles = df["role"]
+        
+    count = 0
+
+    if imagesFolder == []:
+        return HttpResponse("no images to add")
+
+    for name, email, phone, dep, role in  zip(names, emails, phones, departments, roles):
+        
+        
+        name = name.lower()
+        if name.split(".")[0] in savedNames:
+            continue
+            #return HttpResponse("data already exists")
+       
+        count = count + 1
+        
+        i = f"{name}.jpg"
+        print(i)
     
     
         face["face{0}.format(x)"] = face_recognition.load_image_file(folder+i)
@@ -105,13 +139,20 @@ def addData(request):
         x = x+1
         
         record = {
-            "name" : li,
+            "name" : name,
+            "email" : email,
+            "phone" : phone,
+            "department" : dep,
+            "role" : role,
             "encoding" : list(faceEncoding["faceEncoding{0}.format(x)"]),
             }
         DBtable.insert_one(record)
         
-        os.remove(folder+i)
+        #os.remove(folder+i)
 
-    return HttpResponse("record added")
+    if count == 0:
+        return HttpResponse("record already added")
+    else:
+        return HttpResponse("record added")
 
     
