@@ -11,3 +11,5 @@ db = client['faces_encoded']
 dataTable = db['faces'] #stored data table
 
 attendanceTable = db['attendance'] #to store attendance in
+
+adminTable = db['admin'] #admin table

@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.views import View
 from .models import dataTable
 from .models import attendanceTable
+from .models import adminTable
 from datetime import datetime
 
 import pandas as pd
@@ -19,8 +20,37 @@ def home(request):
     return render(request, "recognize/home.html")
 
 def login(request):
-    return render(request, "recognize/login.html")
+    if(request.method == 'GET'):
+        return render(request, "recognize/login.html")
 
+    if(request.method == 'POST'):
+        userid = request.POST.get('userid')
+        password = request.POST.get('password')
+        
+        collection = adminTable
+        document = collection.find_one({"userid" : userid})
+        
+        error = None
+        
+        if document:
+        
+            storedPass = document.get('password')
+            
+            if storedPass == password:
+
+
+                return redirect('home_page')
+        
+            else:
+                error = "Invalid Password"
+                content = {'error' : error}
+                return render(request, 'recognize/login.html', content)
+        else:
+            error = "Invalid UserID"
+            content = {'error' : error}
+            return render(request, 'recognize/login.html', content)
+
+            
 
 def capture(request):
     collection = dataTable
