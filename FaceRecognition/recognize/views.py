@@ -18,6 +18,9 @@ import os
 def home(request):
     return render(request, "recognize/home.html")
 
+def login(request):
+    return render(request, "recognize/login.html")
+
 
 def capture(request):
     collection = dataTable

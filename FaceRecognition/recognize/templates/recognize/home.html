@@ -1,10 +1,121 @@
-<h1>face recognition</h1>
-
 <html>
+<head>
+    <title>FaceNet | Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100..900;1,100..900&family=Pacifico&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: Arial, sans-serif;
+            margin: 0
+        }
+        /* nav bar */
+        #nav {
+            height: 50px;
+            background-color: #FaFaFa;
+        }
+
+            #nav img {
+                margin: 10px;
+                margin-left: 25px;
+                position: absolute;
+            }
+
+        #logoname a {
+            color: #2f1276;
+            margin-left: -55px;
+            font-size: 25px;
+            font-family: "Pacifico", cursive;
+            margin-top: -15px
+        }
+
+        #logoname:hover {
+            color: black
+        }
+
+        #nav ul {
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            margin-left: -50px
+        }
+
+        li {
+            list-style: none;
+            font: bold;
+            padding: 5px
+        }
+
+        a {
+            text-decoration: none;
+            color: slategrey;
+            transition: .3s;
+        }
+
+            a:hover {
+                color: black;
+                transition: .3s;
+            }
+        /* banner */
+        #banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            margin-top: 100px;
+            margin-left: -40px
+        }
+
+        #banner-left {
+            max-width: 650px;
+            margin-top: -60px
+        }
+
+            #banner-left .heading {
+                line-height: 100px;
+                color: #2f1276;
+                font-size: 40px;
+                font-family: "Pacifico", cursive;
+            }
+
+            #banner-left p {
+                font-size: 20px
+            }
+    </style>
+
+</head>
+
     <body>
-        <form method="post">
-            {% csrf_token %}
-            <input type="submit" />
-        </form>
+<!-- nav bar -->
+        <div id="nav">
+            <img src="https://cdn-icons-png.freepik.com/512/12835/12835696.png?ga=GA1.1.864746149.1702396939" alt="" width="30" height="30" class="d-inline-block align-text-top">
+            
+            <ul>
+                <li id="logoname"><a href="{% url 'home_page' %}">FaceNet</a></li>
+                <li></li>
+                <li></li>
+                <li><a href="">About</a></li>
+                <li><a href="{% url 'capture_page' %}">Capture</a></li>
+                <li><a href="{% url 'login_page' %}">Log in</a></li>
+                <li><a href="">View</a></li>
+            </ul>
+        </div>
+
+        {% block content %}
+<!-- banner -->
+        <div id="banner">
+            <div id="banner-left">
+                <p class="heading">Face Recognition Attendance System</p>
+                <p>
+                    Revolutionize attendance management effortlessly with our exclusive organizational face recognition system. Enhance accuracy and efficiency while seamlessly tracking employee attendance. Experience the power of cutting-edge facial recognition technology for streamlined workforce management.
+                </p>
+                    
+            </div>
+
+            <img src="https://img.freepik.com/premium-vector/face-recognition-technology-woman-head-identification-scanner_81894-7479.jpg?w=740" height="400" width="400" alt="banner"/>
+        </div>
+        
+        {% endblock %}
     </body>
 </html>
