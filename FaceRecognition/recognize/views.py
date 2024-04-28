@@ -20,7 +20,8 @@ def home(request):
     if 'LoggedIn' not in request.session:   #checking if session created
         print("no ssessiion")
     else:
-        print(request.session['LoggedIn'])  #getting LoggedIn userid
+        #print(request.session['LoggedIn'])  #getting LoggedIn userid
+        pass
     return render(request, "recognize/home.html")
 
 def login(request):
@@ -54,10 +55,19 @@ def login(request):
             error = "Invalid UserID"
             content = {'error' : error}
             return render(request, 'recognize/login.html', content)
+        
+def loginReq(request):
+    return render(request, 'recognize/loginreq.html')
+    
+def logout(request):
+    del request.session['LoggedIn']
+    return render(request, 'recognize/home.html')
 
-            
 
 def capture(request):
+    if not 'LoggedIn' in request.session:
+            return render(request, 'recognize/loginreq.html')
+
     collection = dataTable
     cursor = collection.find()
     known_encodings = []
@@ -229,4 +239,8 @@ def addData(request):
     else:
         return HttpResponse("record added")
 
+def viewData(request):
+    if not 'LoggedIn' in request.session:
+        return render(request, 'recognize/loginreq.html')
     
+    return render(request, 'recognize/viewdata.html')

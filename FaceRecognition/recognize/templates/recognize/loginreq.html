@@ -1,0 +1,36 @@
+{% extends 'recognize/home.html' %}
+
+{% block content %}
+    
+<style>
+    #container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 90%
+    }
+    .btn {
+        padding: 20px 40px;
+        background-color: #2f1276;
+        color: white;
+        margin-top: 20px;
+        border-radius: 10px
+    }
+
+    .btn:hover {
+        background-color: #4c2b99;
+        color: white
+    }
+
+</style>
+
+<div id="container">
+    <h2>You are not logged in</h2>
+    <img src="https://img.freepik.com/free-vector/forgot-password-concept-illustration_114360-1328.jpg?t=st=1714303437~exp=1714307037~hmac=f1d60fd2920af46c932e4d0b37fed8131895c45916d4bc32ee00b3e5875af2e9&w=740" height="400" width="400" />
+    <h3>Please login to procced futher</h3>
+
+    <a href="{% url 'login_page' %}" class="btn">Log in</a>
+</div>
+
+{% endblock %}
