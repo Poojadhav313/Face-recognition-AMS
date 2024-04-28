@@ -68,9 +68,9 @@ def profile(request):
     if (request.method == "POST"):
         form_type = request.POST.get("form_type")
         if form_type == "adddataBtnForm":
-            print("aaaaaaaaaaaa")
+            #print("aaaaaaaaaaaa")
             error = addData(request)
-            print(error)
+            #print(error)
             context = {"error" : error}
             return render(request, "recognize/profile.html", context)
 
@@ -79,8 +79,153 @@ def profile(request):
             return redirect("home_page")
     
     return render(request, "recognize/aboutus.html")
-        
 
+def addData(request): 
+    error = None
+    
+    savedNames = []
+    collection = dataTable
+    cursor = collection.find()
+    for document in cursor:
+        savedNames.append(document["name"])
+
+    face = {}
+    faceEncoding = {}
+    x = 0
+
+    
+    folder = "C:/Users/dell/Desktop/images/"
+    imagesFolder = os.listdir(folder)
+
+    try:
+        df = pd.read_csv("C:/Users/dell/Desktop/data.csv")
+    except:
+        error = "File not found"
+        return error
+    
+    names = df["name"]
+    emails = df["email"]
+    phones =  df["phone"]
+    departments = df["department"]
+    roles = df["role"]
+        
+    count = 0
+
+    if imagesFolder == []:
+        error = "No image to add"
+        return error
+
+    for name, email, phone, dep, role in  zip(names, emails, phones, departments, roles):
+        
+        name = name.lower()
+        if name in savedNames:
+            continue  #skip if already exists
+        
+        i = f"{name}.jpg"
+        #print(i)
+        
+        if folder + i not in imagesFolder:
+            error = "Image not found"
+            return error
+    
+        face[f"face{x}"] = face_recognition.load_image_file(folder + i)
+        faceEncoding[f"faceEncoding{x}"] = face_recognition.face_encodings(face[f"face{x}"])[0]
+
+        record = {
+            "name" : name,
+            "email" : email,
+            "phone" : phone,
+            "department" : dep,
+            "role" : role,
+            "encoding" : list(faceEncoding[f"faceEncoding{x}"]),
+        }
+        collection.insert_one(record)
+        
+        x = x + 1
+        count = count + 1
+        
+        # os.remove(folder + i)
+
+    if count == 0:
+        error = "No new records added"
+    else:
+        error = f"{count} new records added successfully"
+    
+    return error
+
+def addData1(request): 
+    error = None
+    
+    savedNames = []
+    collection = dataTable
+    cursor = collection.find()
+    for document in cursor:
+        savedNames.append(document["name"])
+
+    face = {}
+    faceEncoding = {}
+    x=0
+
+    
+    folder = "C:/Users/dell/Desktop/images/"
+    imagesFolder = os.listdir(folder)
+
+    try:
+        df = pd.read_csv("C:/Users/dell/Desktop/data.csv")
+    except:
+        error = "File not found"
+        return error
+    
+    names = df["name"]
+    emails = df["email"]
+    phones =  df["phone"]
+    departments = df["department"]
+    roles = df["role"]
+        
+    count = 0
+
+    if imagesFolder == []:
+        error = "No image to add"
+        return error
+
+    for name, email, phone, dep, role in  zip(names, emails, phones, departments, roles):
+        
+        temp = 0
+        name = name.lower()
+        if name.split(".")[0] in savedNames:
+            temp = 1
+            #return HttpResponse("data already exists")
+       
+        
+        count = count + 1
+        
+        i = f"{name}.jpg"
+        print(i)
+    
+    
+        face["face{0}.format(x)"] = face_recognition.load_image_file(folder+i)
+        faceEncoding["faceEncoding{0}.format(x)"] = face_recognition.face_encodings(face["face{0}.format(x)"])[0]
+
+        x = x+1
+        
+        record = {
+            "name" : name,
+            "email" : email,
+            "phone" : phone,
+            "department" : dep,
+            "role" : role,
+            "encoding" : list(faceEncoding["faceEncoding{0}.format(x)"]),
+            }
+        dataTable.insert_one(record)
+        
+        #os.remove(folder+i)
+
+    if count == 0:
+        error = "Record already added"
+        return error
+    else:
+        error = "Record added successfully"
+        return error
 
 def capture(request):
     if not 'LoggedIn' in request.session:
@@ -151,7 +296,7 @@ def capture(request):
             font = cv2.FONT_HERSHEY_DUPLEX
             cv2.putText(frame, name, (left + 6, bottom + 20), font, 0.6, (255, 255, 255), 1)
        
-        cv2.imshow('Video', frame)
+        cv2.imshow('Press q to exit', frame)
         
 
         if cv2.waitKey(1) == ord('q'):
@@ -189,80 +334,6 @@ def capture(request):
     cp.release()
     cv2.destroyAllWindows()
     return redirect('home_page')
-
-def addData(request): 
-    error = None
-    
-    savedNames = []
-    collection = dataTable
-    cursor = collection.find()
-    for document in cursor:
-        savedNames.append(document["name"])
-
-    face = {}
-    faceEncoding = {}
-    x=0
-
-    
-    folder = "C:/Users/dell/Desktop/images/"
-    imagesFolder = os.listdir(folder)
-
-    try:
-        df = pd.read_csv("C:/Users/dell/Desktop/data.csv")
-    except:
-        error = "File not found"
-        return error
-    
-    names = df["name"]
-    emails = df["email"]
-    phones =  df["phone"]
-    departments = df["department"]
-    roles = df["role"]
-        
-    count = 0
-
-    if imagesFolder == []:
-        error = "No image to add"
-        return error
-
-    for name, email, phone, dep, role in  zip(names, emails, phones, departments, roles):
-        
-        
-        name = name.lower()
-        if name.split(".")[0] in savedNames:
-            continue
-            #return HttpResponse("data already exists")
-       
-        count = count + 1
-        
-        i = f"{name}.jpg"
-        print(i)
-    
-    
-        face["face{0}.format(x)"] = face_recognition.load_image_file(folder+i)
-        faceEncoding["faceEncoding{0}.format(x)"] = face_recognition.face_encodings(face["face{0}.format(x)"])[0]
-
-        x = x+1
-        
-        record = {
-            "name" : name,
-            "email" : email,
-            "phone" : phone,
-            "department" : dep,
-            "role" : role,
-            "encoding" : list(faceEncoding["faceEncoding{0}.format(x)"]),
-            }
-        dataTable.insert_one(record)
-        
-        #os.remove(folder+i)
-
-    if count == 0:
-        error = "Record already added"
-        return error
-    else:
-        error = "Record added successfully"
-        return error
-
 
 def viewData(request):
     if not 'LoggedIn' in request.session:
