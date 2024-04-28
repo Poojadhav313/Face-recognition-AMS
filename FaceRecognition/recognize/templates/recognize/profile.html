@@ -1,0 +1,66 @@
+{% extends 'recognize/home.html' %}
+
+{% block content %}
+<style>
+    .hello{
+        text-align: center;
+        font-size: 30px;
+        margin-top: 50px
+    }
+    .info{
+        margin: 50px 10%;
+        text-align: justify;
+        font-size: 20px;
+        line-height: 30px
+    }
+
+    .profile .btn{
+        position:absolute;
+        top: 70%;
+        left: 50%;
+        transform: translate(-50%, -30%)
+    }
+    .btn1 {
+        padding: 20px 40px;
+        background-color: #2f1276;
+        color: white;
+        margin-top: 20px;
+        border-radius: 10px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -40%);
+    }
+    .btn1:hover {
+        background-color: #4c2b99;
+        color: white
+    }
+
+    
+</style>
+
+<div class="profile">
+    {% if error %}
+        <div class="formAlert">
+            {{error}}
+        </div>
+    {% endif %}
+
+    <p class="hello">Hello, {{ request.session.LoggedIn }}</p>
+
+    <p class="info">To add new emplyees to the database create a CSV file on desktop with "data.csv" name having appropriate data fields. Then create a folder on desktop named as "images" which will contain the jpg format images having there name as the employee name. Then click button "Add New Faces" to add that data to the database.</p>
+
+    <form method="post" action="{% url 'profile_page' %}">
+        {% csrf_token %}
+        <input type="hidden" name="form_type" value="adddataBtnForm">
+        <input type="submit" value="Add New Faces" class="btn1">
+    </form>
+
+    <form method="post" action="{% url 'profile_page' %}">
+        {% csrf_token %}
+        <input type="hidden" name="form_type" value="logoutBtnForm">
+        <input type="submit" value="Log out" class="btn">
+    </form>
+</div>
+
+{% endblock %}

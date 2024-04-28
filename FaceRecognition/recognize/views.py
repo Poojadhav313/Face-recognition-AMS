@@ -1,6 +1,7 @@
 from ast import Str
 from asyncio.windows_events import NULL
 import datetime
+from urllib import response
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views import View
@@ -59,9 +60,26 @@ def login(request):
 def loginReq(request):
     return render(request, 'recognize/loginreq.html')
     
-def logout(request):
-    del request.session['LoggedIn']
-    return render(request, 'recognize/home.html')
+def profile(request):
+    if request.method == "GET":
+        return render(request, 'recognize/profile.html')
+
+    
+    if (request.method == "POST"):
+        form_type = request.POST.get("form_type")
+        if form_type == "adddataBtnForm":
+            print("aaaaaaaaaaaa")
+            error = addData(request)
+            print(error)
+            context = {"error" : error}
+            return render(request, "recognize/profile.html", context)
+
+        if form_type == "logoutBtnForm":
+            del request.session['LoggedIn']
+            return redirect("home_page")
+    
+    return render(request, "recognize/aboutus.html")
+        
 
 
 def capture(request):
@@ -173,6 +191,8 @@ def capture(request):
     return redirect('home_page')
 
 def addData(request): 
+    error = None
+    
     savedNames = []
     collection = dataTable
     cursor = collection.find()
@@ -190,7 +210,8 @@ def addData(request):
     try:
         df = pd.read_csv("C:/Users/dell/Desktop/data.csv")
     except:
-        return HttpResponse("File not found")
+        error = "File not found"
+        return error
     
     names = df["name"]
     emails = df["email"]
@@ -201,7 +222,8 @@ def addData(request):
     count = 0
 
     if imagesFolder == []:
-        return HttpResponse("no images to add")
+        error = "No image to add"
+        return error
 
     for name, email, phone, dep, role in  zip(names, emails, phones, departments, roles):
         
@@ -235,9 +257,11 @@ def addData(request):
         #os.remove(folder+i)
 
     if count == 0:
-        return HttpResponse("record already added")
+        error = "Record already added"
+        return error
     else:
-        return HttpResponse("record added")
+        error = "Record added successfully"
+        return error
 
 
 def viewData(request):
