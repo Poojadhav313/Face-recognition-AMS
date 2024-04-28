@@ -1,6 +1,150 @@
 {% extends 'recognize/home.html' %}
 
 {% block content %}
+<style>
+    p{
+        margin: 50px 0 10px 65px;
+    }
+    form{
+        margin-bottom: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    form select{
+        margin: 0 10px;
+        padding: 10px 5px;
+        border-radius: 10px;
+        font-size: 15px
+    }
 
+    .btn {
+        padding: 10px 20px;
+        margin-top: 0
+    }
+
+    table {
+        text-align: center;
+        margin: auto
+    }
+
+    .trr th {
+        background-color: #2f1276;
+        color: white;
+        padding: 10px 10px 
+    }
+
+    table td {
+        border: 1px solid #d8d8d8;
+        background-color: #e5e5e5;
+        padding: 10px 16px;
+        margin: 0
+    }
+</style>
+
+
+<p>Search..</p>
+<form method="post" action="{% url 'viewdata_page' %}">
+    {% csrf_token %}
+
+    <!--<select name="id" id="id">
+        <option value="">Select ID</option>
+
+        {% for i in id %}
+        <option value="{{ i }}">{{ i }}</option>
+        {% endfor %}
+    </select>-->
+
+    <select name="name" id="name">
+        <option value="">Select Name</option>
+
+        {% for n in name %}
+        <option value="{{ n }}">{{ n }}</option>
+        {% endfor %}
+    </select>
+
+    <select name="email" id="email">
+        <option value="">Select Email</option>
+
+        {% for e in email %}
+        <option value="{{ e }}">{{ e }}</option>
+        {% endfor %}
+    </select>
+
+    <select name="department" id="department">
+        <option value="">Select Department</option>
+
+        {% for d in dep %}
+        <option value="{{ d }}">{{ d }}</option>
+        {% endfor %}
+    </select>
+
+
+    <select name="role" id="role">
+        <option value="">Select Role</option>
+
+        {% for r in role %}
+        <option value="{{ r }}">{{ r }}</option>
+        {% endfor %}
+    </select>
+
+    <select name="day" id="day">
+        <option value="">Select Day</option>
+
+        {% for da in day %}
+        <option value="{{ da }}">{{ da }}</option>
+        {% endfor %}
+    </select>
+
+    <select name="month" id="month">
+        <option value="">Select Month</option>
+
+        {% for m in month %}
+        <option value="{{ m }}">{{ m }}</option>
+        {% endfor %}
+    </select>
+
+    <select name="year" id="year">
+        <option value="">Select Year</option>
+
+        {% for y in year %}
+        <option value="{{ y }}">{{ y }}</option>
+        {% endfor %}
+    </select>
+
+
+    <input type="submit" value="Filter" class="btn">
+</form>
+
+
+<table>
+    <tr class="trr">
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Department</th>
+        <th>Role</th>
+        <th>Day</th>
+        <th>Month</th>
+        <th>Year</th>
+        <th>Time</th>
+
+    </tr>
+    {% for item in data %}
+    <tr>
+        <td>{{ item.id }}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.email }}</td>
+        <td>{{ item.department }}</td>
+        <td>{{ item.role }}</td>
+        <td>{{ item.day }}</td>
+        <td>{{ item.month }}</td>
+        <td>{{ item.year }}</td>
+        <td>{{ item.time }}</td>
+
+    </tr>
+
+    {% endfor %}
+</table>
 
 {% endblock %}

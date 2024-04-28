@@ -170,7 +170,7 @@ def capture(request):
 
     cp.release()
     cv2.destroyAllWindows()
-    return HttpResponse("running")
+    return redirect('home_page')
 
 def addData(request): 
     savedNames = []
@@ -239,8 +239,64 @@ def addData(request):
     else:
         return HttpResponse("record added")
 
+
 def viewData(request):
     if not 'LoggedIn' in request.session:
         return render(request, 'recognize/loginreq.html')
+
+    collection = attendanceTable
+    cursor = list(collection.find())
+
+    names = set()
+    emails = set()
+    deps = set()
+    roles = set()
+    days = set()
+    months = set()
+    years = set()
     
-    return render(request, 'recognize/viewdata.html')
+
+    for document in cursor:
+        names.add(document['name'])
+        emails.add(document['email'])
+        deps.add(document['department'])
+        roles.add(document['role'])
+        days.add(int(document['day']))
+        months.add(int(document['month']))  
+        years.add(int(document['year']))
+
+    context = {'data': cursor, "name": names, "email" : emails, "dep": deps, "role": roles, "day" : days, "month" : months, "year" : years}
+
+    if request.method == 'POST':
+        selected_name = request.POST.get('name')
+        selected_email = request.POST.get('email')
+        selected_department = request.POST.get('department')
+        selected_role = request.POST.get('role')
+        selected_day = request.POST.get('day')
+        selected_month = request.POST.get('month')
+        selected_year = request.POST.get('year')
+
+
+        print(cursor)
+        if selected_name:
+            cursor = [doc for doc in cursor if doc['name'] == selected_name]
+        if selected_email:
+            cursor = [doc for doc in cursor if doc['email'] == selected_email]
+        if selected_department:
+            cursor = [doc for doc in cursor if doc['department'] == selected_department]
+        if selected_role:
+            cursor = [doc for doc in cursor if doc['role'] == selected_role]
+        if selected_day:
+            selected_day = int(selected_day)
+            cursor = [doc for doc in cursor if doc['day'] == selected_day]
+        if selected_month:
+            selected_month = int(selected_month)
+            cursor = [doc for doc in cursor if int(doc['month']) == selected_month]
+        if selected_year:
+            selected_year = int(selected_year)
+            cursor = [doc for doc in cursor if doc['year'] == selected_year]
+        
+
+        context['data'] = cursor
+
+    return render(request, 'recognize/viewdata.html', context)
