@@ -17,6 +17,10 @@ import numpy as np
 import os
 
 def home(request):
+    if 'LoggedIn' not in request.session:   #checking if session created
+        print("no ssessiion")
+    else:
+        print(request.session['LoggedIn'])  #getting LoggedIn userid
     return render(request, "recognize/home.html")
 
 def login(request):
@@ -38,6 +42,7 @@ def login(request):
             
             if storedPass == password:
 
+                request.session['LoggedIn'] = userid    #session created
 
                 return redirect('home_page')
         
