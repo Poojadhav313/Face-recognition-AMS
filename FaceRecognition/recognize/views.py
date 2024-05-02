@@ -10,11 +10,10 @@ from .models import attendanceTable
 from .models import adminTable
 from datetime import datetime
 
-import pandas as pd
-
 import face_recognition
 import cv2
 import numpy as np
+import pandas as pd
 import os
 
 def home(request):
@@ -76,11 +75,83 @@ def profile(request):
 
         if form_type == "logoutBtnForm":
             del request.session['LoggedIn']
-            return redirect("home_page")
+            context = {"msg" : "logged Out Successfully"}
+            return render(request, "recognize/home.html", context)
     
     return render(request, "recognize/aboutus.html")
 
-def addData(request): 
+def addData(request):
+    error = None
+
+    savedNames = []
+    collection = dataTable
+    cursor = collection.find()
+    for document in cursor:
+        savedNames.append(document["name"])
+
+    face = {}
+    faceEncoding = {}
+    x = 0
+
+    folder = "C:/Users/dell/Desktop/images/"
+    imagesFolder = os.listdir(folder)
+
+    try:
+        df = pd.read_csv("C:/Users/dell/Desktop/data.csv")
+    except:
+        error = "data.csv File not found"
+        return error
+
+    names = df["name"]
+    emails = df["email"]
+    phones =  df["phone"]
+    departments = df["department"]
+    roles = df["role"]
+    
+    count = 0
+
+    if not imagesFolder:
+        error = "No images found in the folder"
+        return error
+
+    for name, email, phone, dep, role in zip(names, emails, phones, departments, roles):
+        name = name.lower()
+        if name in savedNames:
+            continue  # Skip if already exists
+    
+
+        image_path = os.path.join(folder, f"{name}.jpg")
+        
+        if not os.path.exists(image_path):
+            error = f"Image of {name} not found"
+            print(error)
+            return error
+
+        face[f"face{x}"] = face_recognition.load_image_file(image_path)
+        faceEncoding[f"faceEncoding{x}"] = face_recognition.face_encodings(face[f"face{x}"])[0]
+
+        record = {
+            "name": name,
+            "email": email,
+            "phone": phone,
+            "department": dep,
+            "role": role,
+            "encoding": list(faceEncoding[f"faceEncoding{x}"]),
+        }
+        collection.insert_one(record)
+    
+        x += 1
+        count += 1
+
+    if count == 0:
+        error = "No new records added"
+    else:
+        error = f"{count} new records added successfully"
+
+    return error
+
+
+def addData2(request): 
     error = None
     
     savedNames = []
@@ -118,13 +189,14 @@ def addData(request):
     for name, email, phone, dep, role in  zip(names, emails, phones, departments, roles):
         
         name = name.lower()
+        print(name)
         if name in savedNames:
             continue  #skip if already exists
         
-        i = f"{name}.jpg"
-        #print(i)
+        i = os.path.join(folder, f"{name}.jpg")
+        print(i)
         
-        if folder + i not in imagesFolder:
+        if i not in imagesFolder:
             error = f"Image of {name} not found"
             return error
     

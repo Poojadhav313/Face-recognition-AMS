@@ -110,13 +110,19 @@
             z-index: 10
         }
 
-        .btn {
-            padding: 20px 40px;
-            background-color: #2f1276;
-            color: white;
-            margin-top: 20px;
-            border-radius: 10px
+        .formAlertGreen {
+            background: #00cc00;
+            border: 1px solid #00b200;
+            color: #006600;
         }
+
+            .btn {
+                padding: 20px 40px;
+                background-color: #2f1276;
+                color: white;
+                margin-top: 20px;
+                border-radius: 10px
+            }
 
             .btn:hover {
                 background-color: #4c2b99;
@@ -147,6 +153,12 @@
             <li><a href="{% url 'viewdata_page' %}">View</a></li>
         </ul>
     </div>
+
+    {% if msg %}
+    <div class="formAlert formAlertGreen">
+        {{msg}}
+    </div>
+    {% endif %}
 
     {% block content %}
     <!-- banner -->
