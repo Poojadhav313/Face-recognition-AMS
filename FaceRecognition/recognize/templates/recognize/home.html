@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>FaceNet | Home</title>
+    <title>FaceNet</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -107,6 +107,7 @@
             color: #800000;
             text-align: center;
             text-transform: uppercase;
+            z-index: 10
         }
 
         .btn {
@@ -125,48 +126,48 @@
 
 </head>
 
-    <body>
-<!-- nav bar -->
-        <div id="nav">
-            <img src="https://cdn-icons-png.freepik.com/512/12835/12835696.png?ga=GA1.1.864746149.1702396939" alt="" width="30" height="30" class="d-inline-block align-text-top">
-            
-            <ul>
-                <li id="logoname"><a href="{% url 'home_page' %}">FaceNet</a></li>
-                <li></li>
-                <li></li>
-                <!--<li><a href="">About</a></li>-->
-                <li><a href="{% url 'capture_page' %}">Capture</a></li>
+<body>
+    <!-- nav bar -->
+    <div id="nav">
+        <img src="https://cdn-icons-png.freepik.com/512/12835/12835696.png?ga=GA1.1.864746149.1702396939" alt="" width="30" height="30" class="d-inline-block align-text-top">
 
-                {% if 'LoggedIn' not in request.session %}
-                <li><a href="{% url 'login_page' %}">Log in</a></li>
-                {% else %}
-                <li><a href="{% url 'profile_page' %}">Profile</a></li>
-                {% endif %}
+        <ul>
+            <li id="logoname"><a href="{% url 'home_page' %}">FaceNet</a></li>
+            <li></li>
+            <li></li>
+            <!--<li><a href="">About</a></li>-->
+            <li><a href="{% url 'capture_page' %}">Capture</a></li>
 
-                <li><a href="{% url 'viewdata_page' %}">View</a></li>
-            </ul>
+            {% if 'LoggedIn' not in request.session %}
+            <li><a href="{% url 'login_page' %}">Log in</a></li>
+            {% else %}
+            <li><a href="{% url 'profile_page' %}">Profile</a></li>
+            {% endif %}
+
+            <li><a href="{% url 'viewdata_page' %}">View</a></li>
+        </ul>
+    </div>
+
+    {% block content %}
+    <!-- banner -->
+    <div id="banner">
+        <div id="banner-left">
+            <p class="heading">Face Recognition Attendance System</p>
+            <p id="description">
+                Revolutionize attendance management effortlessly with our exclusive organizational face recognition system. Enhance accuracy and efficiency while seamlessly tracking employee attendance. Experience the power of cutting-edge facial recognition technology for streamlined workforce management.
+            </p>
+
         </div>
 
-        {% block content %}
-<!-- banner -->
-        <div id="banner">
-            <div id="banner-left">
-                <p class="heading">Face Recognition Attendance System</p>
-                <p>
-                    Revolutionize attendance management effortlessly with our exclusive organizational face recognition system. Enhance accuracy and efficiency while seamlessly tracking employee attendance. Experience the power of cutting-edge facial recognition technology for streamlined workforce management.
-                </p>
-                    
-            </div>
+        <img src="https://img.freepik.com/premium-vector/face-recognition-technology-woman-head-identification-scanner_81894-7479.jpg?w=740" height="400" width="400" alt="banner" class="banner-img" />
+    </div>
 
-            <img src="https://img.freepik.com/premium-vector/face-recognition-technology-woman-head-identification-scanner_81894-7479.jpg?w=740" height="400" width="400" alt="banner"/>
-        </div>
-        
-        <footer>
-            <hr />
-            <p>&copy 2024 FaceNet, All rights reserved.</p>
-        </footer>
+    <footer>
+        <hr />
+        <p>&copy 2024 FaceNet, All rights reserved.</p>
+    </footer>
 
-        {% endblock %}
+    {% endblock %}
 
-    </body>
+</body>
 </html>
